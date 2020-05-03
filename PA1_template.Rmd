@@ -5,7 +5,9 @@ output:
     fig_caption: yes
     keep_md: yes
 ---
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ## Loading and preprocessing the data
 ```{r loaddataset}
@@ -15,7 +17,7 @@ dat <- read.csv("activity Dataset/activity.csv",header = TRUE)
 ```
 
 ## What is mean total number of steps taken per day?
-```{r Q1,echo=TRUE}
+```{r Q1}
 date <- character()
 steps_sum <- integer()
 count <- 288
