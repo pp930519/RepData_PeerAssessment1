@@ -2,8 +2,8 @@
 title: "Reproducible Research: Peer Assessment 1"
 output: 
   html_document: 
-    fig_caption: true
-    keep_md: true
+    fig_caption: yes
+    keep_md: yes
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -27,7 +27,7 @@ for (i in 0:60) {
     steps_sum[i+1] <- sum(dat$steps[(i*count + 1):(i*count + 288)], na.rm = TRUE)
 }
 dat1 <- data.frame(date = date, steps_sum = steps_sum)
-ggplot(dat1, aes(x = steps_sum)) + geom_histogram() + labs(x = " total number of steps taken per day")
+ggplot(dat1, aes(x = steps_sum)) + geom_histogram() + labs(x =  "total number of steps taken per day")
 summary(dat1$steps_sum)
 ```
 
@@ -43,7 +43,7 @@ for (i in 1:length(unique(dat$interval))) {
     steps_ave[i] <- as.integer(mean(filter(dat, dat$interval == unique(dat$interval)[i])[,1], na.rm = TRUE))
 }
 dat2 <- data.frame(interval = interval, steps_ave = steps_ave)
-ggplot(dat2, aes(x = as.integer(as.character(interval)), y = steps_ave)) + geom_line(col = "blue") + labs(x = "interval", y = "average number of steps")
+ggplot(dat2, aes(x = as.integer(as.character(interval)), y = steps_ave)) + geom_line(col = "blue")
 ```
 
 On average across all the days in the dataset, interval at 835 contains the maximum number of steps
@@ -54,6 +54,7 @@ The total number of missing values in the dataset is
 sum(is.na(dat$steps))
 ```
 ```{r buildnewdataset}
+library(ggplot2)
 steps_ave <-integer()
 for (i in 1:length(dat1$steps_sum)) {
      steps_ave[i] <- dat1[,2][i]/61
@@ -73,11 +74,13 @@ for (i in 0:60) {
     steps_sum[i+1] <- sum(dat_new$steps[(i*count + 1):(i*count + 288)], na.rm = TRUE)
 }
 dat_new1 <- data.frame(date = date, steps_sum = steps_sum)
-ggplot(dat_new1, aes(x = steps_sum)) + geom_histogram() + labs(x = " total number of steps taken per day")
+ggplot(dat_new1, aes(x = steps_sum)) + geom_histogram() + labs(x =  "total number of steps taken per day")
 summary(dat_new1$steps_sum)
 ```
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r Q4answer}
+library(ggplot2)
+library(dplyr)
 weekdays <- vector()
 for (i in 1:length(dat_new$date)) {
      if (weekdays(as.Date(dat_new$date[i])) == "Saturday" | weekdays(as.Date(dat_new$date[i])) == "Sunday") {
@@ -87,10 +90,6 @@ for (i in 1:length(dat_new$date)) {
      }
 }
 dat_new <- mutate(dat_new, weekdays = weekdays)
-steps_mean <- vector()
-for (i in 1:length(dat_new$steps)) {
-     steps_mean[i] <- filter(dat2, as.character(dat2$interval) == as.character(dat_new[i,3]))[,2]
-}
-dat_new <- mutate(dat_new, steps_mean = steps_mean)
-ggplot(dat_new, aes(x = interval, y =  steps_mean, color = weekdays)) + geom_line() + facet_wrap(~ weekdays, ncol = 1, nrow = 2) + labs(y = "Number of steps")
-```
+dat3 <- aggregate(steps ~ interval + weekdays, dat_new, mean)
+g <- ggplot(dat3, aes(x = interval, y =  steps, color = weekdays))
+g + geom_line() + facet_grid(weekdays ~ .) + labs(y = "Number of steps")
