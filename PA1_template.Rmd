@@ -15,7 +15,7 @@ dat <- read.csv("activity Dataset/activity.csv",header = TRUE)
 ```
 
 ## What is mean total number of steps taken per day?
-```{r Q1}
+```{r Q1,echo=TRUE}
 date <- character()
 steps_sum <- integer()
 count <- 288
