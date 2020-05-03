@@ -18,6 +18,7 @@ dat <- read.csv("activity Dataset/activity.csv",header = TRUE)
 ## What is mean total number of steps taken per day?
 
 ```r
+library(ggplot2)
 date <- character()
 steps_sum <- integer()
 count <- 288
@@ -26,7 +27,11 @@ for (i in 0:60) {
     steps_sum[i+1] <- sum(dat$steps[(i*count + 1):(i*count + 288)], na.rm = TRUE)
 }
 dat1 <- data.frame(date = date, steps_sum = steps_sum)
-hist(dat1$steps_sum, xlab = " total number of steps taken per day", main = NA)
+ggplot(dat1, aes(x = steps_sum)) + geom_histogram() + labs(x = " total number of steps taken per day")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
 ![](PA1_template_files/figure-html/Q1-1.png)<!-- -->
@@ -71,7 +76,7 @@ for (i in 1:length(unique(dat$interval))) {
     steps_ave[i] <- as.integer(mean(filter(dat, dat$interval == unique(dat$interval)[i])[,1], na.rm = TRUE))
 }
 dat2 <- data.frame(interval = interval, steps_ave = steps_ave)
-plot(steps_ave ~ interval, data = dat2, type = "l")
+ggplot(dat2, aes(x = as.numeric(interval), y = steps_ave)) + geom_line(col = "blue")
 ```
 
 ![](PA1_template_files/figure-html/Q2-1.png)<!-- -->

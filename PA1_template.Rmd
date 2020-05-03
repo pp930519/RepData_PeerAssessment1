@@ -18,6 +18,7 @@ dat <- read.csv("activity Dataset/activity.csv",header = TRUE)
 
 ## What is mean total number of steps taken per day?
 ```{r Q1}
+library(ggplot2)
 date <- character()
 steps_sum <- integer()
 count <- 288
@@ -26,7 +27,7 @@ for (i in 0:60) {
     steps_sum[i+1] <- sum(dat$steps[(i*count + 1):(i*count + 288)], na.rm = TRUE)
 }
 dat1 <- data.frame(date = date, steps_sum = steps_sum)
-hist(dat1$steps_sum, xlab = " total number of steps taken per day", main = NA)
+ggplot(dat1, aes(x = steps_sum)) + geom_histogram() + labs(x = " total number of steps taken per day")
 summary(dat1$steps_sum)
 ```
 
@@ -42,7 +43,7 @@ for (i in 1:length(unique(dat$interval))) {
     steps_ave[i] <- as.integer(mean(filter(dat, dat$interval == unique(dat$interval)[i])[,1], na.rm = TRUE))
 }
 dat2 <- data.frame(interval = interval, steps_ave = steps_ave)
-plot(steps_ave ~ interval, data = dat2, type = "l")
+ggplot(dat2, aes(x = as.integer(as.character(interval)), y = steps_ave)) + geom_line(col = "blue") + labs(x = "interval", y = "average number of steps")
 ```
 
 On average across all the days in the dataset, interval at 835 contains the maximum number of steps
@@ -72,7 +73,7 @@ for (i in 0:60) {
     steps_sum[i+1] <- sum(dat_new$steps[(i*count + 1):(i*count + 288)], na.rm = TRUE)
 }
 dat_new1 <- data.frame(date = date, steps_sum = steps_sum)
-hist(dat_new1$steps_sum, xlab = " total number of steps taken per day", main = NA)
+ggplot(dat_new1, aes(x = steps_sum)) + geom_histogram() + labs(x = " total number of steps taken per day")
 summary(dat_new1$steps_sum)
 ```
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -91,7 +92,5 @@ for (i in 1:length(dat_new$steps)) {
      steps_mean[i] <- filter(dat2, as.character(dat2$interval) == as.character(dat_new[i,3]))[,2]
 }
 dat_new <- mutate(dat_new, steps_mean = steps_mean)
-library(ggplot2)
-g <- ggplot(dat_new, aes(x = interval, y =  steps_mean))
-g + geom_line() + facet_grid(weekdays ~ .) + labs(y = "Number of steps")
+ggplot(dat_new, aes(x = interval, y =  steps_mean, color = weekdays)) + geom_line() + facet_wrap(~ weekdays, ncol = 1, nrow = 2) + labs(y = "Number of steps")
 ```
